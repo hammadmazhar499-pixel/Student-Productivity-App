@@ -1,0 +1,17 @@
+{
+  "name": "student-productivity-app",
+  "version": "1.0.0",
+  "description": "Student Productivity and Academic Management Web Application",
+  "main": "index.js",
+  "scripts": {
+    "server": "json-server --watch db.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  }
+}

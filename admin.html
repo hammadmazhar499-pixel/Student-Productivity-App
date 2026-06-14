@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Dashboard - Manage academic tasks, view statistics, and control task visibility.">
+  <title>Admin Dashboard - Student Productivity App</title>
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="admin-body">
+
+  <nav class="admin-navbar navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="admin.html">
+        <i class="bi bi-speedometer2" aria-hidden="true"></i> Admin Dashboard
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar"
+        aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="adminNavbar">
+        <ul class="navbar-nav ms-auto gap-1">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Student Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="admin.html">Admin Panel</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section id="admin-header" class="page-header">
+      <h1 class="page-title">Admin Dashboard</h1>
+      <p class="page-subtitle">Manage academic tasks, view statistics, and control task visibility for students.</p>
+    </section>
+
+    <div id="admin-success" class="alert alert-success d-none mb-4" role="status" aria-live="polite">
+      <strong>Success!</strong> <span id="admin-success-text">Action completed successfully.</span>
+    </div>
+
+    <section id="admin-stats" class="mb-4 d-none">
+      <div class="row g-3">
+
+        <div class="col-6 col-md-3">
+          <div class="stat-card accent-blue">
+            <p class="stat-label">Total Tasks</p>
+            <p class="stat-value" id="stat-total">0</p>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="stat-card accent-green">
+            <p class="stat-label">Completed</p>
+            <p class="stat-value" id="stat-completed">0</p>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="stat-card accent-orange">
+            <p class="stat-label">Pending</p>
+            <p class="stat-value" id="stat-pending">0</p>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="stat-card accent-info">
+            <p class="stat-label">Completion Rate</p>
+            <p class="stat-value" id="stat-rate">0%</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="admin-table-section" class="admin-table-panel">
+
+      <div class="panel-header">
+        <h2>All Academic Tasks</h2>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-add-task">
+          <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Add New Task
+        </button>
+      </div>
+
+      <div id="admin-loading" class="loading-state" aria-live="polite">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading tasks...</span>
+        </div>
+        <p>Loading academic tasks…</p>
+      </div>
+
+      <div id="admin-error" class="d-none error-state" aria-live="assertive">
+        <div class="alert alert-danger" role="alert">
+          <strong>Unable to load tasks.</strong>
+          Please make sure JSON Server is running on <code>http://localhost:3000</code>
+        </div>
+      </div>
+
+      <div id="admin-empty" class="d-none empty-state" aria-live="polite">
+        <i class="bi bi-inbox empty-icon" aria-hidden="true"></i>
+        <h3>No Tasks Found</h3>
+        <p>There are no academic tasks in the database. Click "Add New Task" to create one.</p>
+      </div>
+
+      <div id="admin-table-container" class="table-responsive d-none">
+        <table class="admin-table table table-hover mb-0 align-middle">
+          <thead>
+            <tr>
+              <th scope="col" style="padding-left: 24px;">Title</th>
+              <th scope="col">Course</th>
+              <th scope="col">Type</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Status</th>
+              <th scope="col">Est. Hours</th>
+              <th scope="col">Source</th>
+              <th scope="col">Visibility</th>
+              <th scope="col">Created</th>
+              <th scope="col" style="padding-right: 24px; text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body">
+            <!-- Task rows will be inserted here by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+  <div class="modal fade" id="adminTaskModal" tabindex="-1" aria-labelledby="adminTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form id="admin-task-form" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title" id="adminTaskModalLabel">Add New Task</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <div id="admin-modal-error" class="alert alert-danger d-none mb-3" role="alert">
+              <strong>Submission Failed:</strong> <span id="admin-modal-error-text">Please check your inputs and try again.</span>
+            </div>
+
+            <div class="row g-3">
+              
+              <div class="col-12 col-md-6">
+                <label for="adminTaskTitle" class="form-label">Task Title <span class="req">*</span></label>
+                <input type="text" class="form-control" id="adminTaskTitle" name="title" maxlength="100">
+                <div id="adminTaskTitleFeedback" class="invalid-feedback"></div>
+              </div>
+
+              
+              <div class="col-12 col-md-6">
+                <label for="adminTaskCourse" class="form-label">Course <span class="req">*</span></label>
+                <input type="text" class="form-control" id="adminTaskCourse" name="course" maxlength="80">
+                <div id="adminTaskCourseFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="adminTaskType" class="form-label">Task Type <span class="req">*</span></label>
+                <select class="form-select" id="adminTaskType" name="type">
+                  <option value="">Select task type</option>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Quiz">Quiz</option>
+                  <option value="Exam">Exam</option>
+                  <option value="Project">Project</option>
+                  <option value="Study Session">Study Session</option>
+                </select>
+                <div id="adminTaskTypeFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <label for="adminTaskDueDate" class="form-label">Due Date <span class="req">*</span></label>
+                <input type="date" class="form-control" id="adminTaskDueDate" name="dueDate">
+                <div id="adminTaskDueDateFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label for="adminTaskPriority" class="form-label">Priority <span class="req">*</span></label>
+                <select class="form-select" id="adminTaskPriority" name="priority">
+                  <option value="">Select priority</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+                <div id="adminTaskPriorityFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label for="adminTaskStatus" class="form-label">Status <span class="req">*</span></label>
+                <select class="form-select" id="adminTaskStatus" name="status">
+                  <option value="">Select status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+                <div id="adminTaskStatusFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label for="adminTaskHours" class="form-label">Estimated Hours <span class="req">*</span></label>
+                <input type="number" class="form-control" id="adminTaskHours" name="estimatedHours" min="0.5" max="100" step="0.5">
+                <div id="adminTaskHoursFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12">
+                <label for="adminTaskDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="adminTaskDescription" name="description" rows="3" maxlength="500"></textarea>
+                <div id="adminTaskDescriptionFeedback" class="invalid-feedback"></div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="adminTaskVisible" name="isVisible" checked>
+                  <label class="form-check-label" for="adminTaskVisible">Visible to Students</label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-admin-submit">Save Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="adminDeleteModal" tabindex="-1" aria-labelledby="adminDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content delete-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="adminDeleteModalLabel">Delete Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-1" style="color: var(--text-secondary);">You are about to permanently delete:</p>
+          <p class="mb-0 fw-semibold" id="delete-task-title-display" style="color: var(--text-main); font-size: 1rem;"></p>
+          <p class="small mt-2 mb-0" style="color: var(--text-muted);">This action cannot be undone.</p>
+
+          <div id="admin-delete-error" class="alert alert-danger d-none mt-3 mb-0" role="alert">
+            Failed to delete task. Please try again.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p class="footer-text">Student Productivity &amp; Academic Management App</p>
+      <p class="footer-sub">Built with Bootstrap 5 &amp; JSON Server</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ 
+  <script src="admin.js" defer></script>
+</body>
+
+</html>

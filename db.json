@@ -1,0 +1,60 @@
+{
+  "tasks": [
+    {
+      "title": "Test Task",
+      "course": "CS 101",
+      "type": "Assignment",
+      "dueDate": "2026-06-30",
+      "priority": "Low",
+      "status": "Completed",
+      "estimatedHours": 5,
+      "description": "",
+      "isVisible": true,
+      "createdAt": "2026-06-05",
+      "source": "Admin",
+      "id": 1
+    },
+    {
+      "title": "cvv",
+      "course": "cv",
+      "type": "Exam",
+      "dueDate": "2026-07-04",
+      "priority": "High",
+      "estimatedHours": 5,
+      "description": "",
+      "status": "Pending",
+      "isVisible": true,
+      "createdAt": "2026-06-05",
+      "source": "Student",
+      "id": 2
+    },
+    {
+      "title": "task",
+      "course": "web tech",
+      "type": "Study Session",
+      "dueDate": "2026-06-28",
+      "priority": "High",
+      "estimatedHours": 5,
+      "description": "descriptioon",
+      "status": "Pending",
+      "isVisible": true,
+      "createdAt": "2026-06-06",
+      "source": "Student",
+      "id": 3
+    },
+    {
+      "title": "task",
+      "course": "web tech",
+      "type": "Assignment",
+      "dueDate": "2026-06-12",
+      "priority": "Medium",
+      "status": "In Progress",
+      "estimatedHours": 2,
+      "description": "description",
+      "isVisible": true,
+      "createdAt": "2026-06-06",
+      "source": "Admin",
+      "id": 4
+    }
+  ]
+}
